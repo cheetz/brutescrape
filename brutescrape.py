@@ -71,6 +71,7 @@ for site in sites:
         print "[*] Downloading Content For : " + site
         x_arr = []
         response = urllib2.urlopen(site)
+        response.addheaders = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0')]
         x = stripHTMLTags(response.read())
 	#Replace junk found in our response
         x = x.replace('\n',' ')
@@ -85,7 +86,8 @@ for site in sites:
               if ((y[0] == '2') and (y[1] == 'F')) or ((y[0] == '2') and (y[1] == '3')) or ((y[0] == '3') and (y[1] == 'F')) or ((y[0] == '3') and (y[1] == 'D')):
                 y = y[2:]
               y_arr.append(y)
-    except:
+    except Exception as e:
+        print "[*] Error: " + str(e)
         pass
 
 y_arr_unique = OrderedDict.fromkeys(y_arr).keys()
@@ -101,4 +103,3 @@ f_write.close()
 print "[*] Wordlist Generation Complete."
 print "[*] Output Located: passwordList.txt"
 print "[*] Total Count of Passwords >> " + str(len(y_arr_unique))
-
