@@ -1,32 +1,26 @@
-#!/usr/bin/python 
-#for python version 3.7.3
+#!/usr/bin/python
 
 #Secure Planet LLC
-#http://shafis.in
 
-import urllib
-import requests 
+import urllib2
 import re
 import re
 import os, sys
 
 from collections import OrderedDict
 
-os.system('cls')
-
-banner_file = "brutescrape.banner" 
-#banner file
+banner_file = "brutescrape.banner"
 def banner():
     global banner_file
     open_banner = open(banner_file, "r")
     for line in open_banner:
-        print (line.rstrip())
+        print line.rstrip()
     open_banner.close()
 
 def stripHTMLTags (html):
 #Strip HTML tags from any string and transfrom special entities.
     text = html
-
+ 
 #Apply rules in given order.
     rules = [
       { r'>\s+' : u'>'},                  # Remove spaces after a tag opens or closes.
@@ -64,24 +58,21 @@ banner()
 y_arr = []
 
 try:
-    print ('[*] Trying URLs in sites.scrape...')
     file_list = open('sites.scrape','r')
     sites = file_list.read().split(',')
 
 except:
-    print ('[X] execption 1')
     banner()
     sys.exit()
 
 for site in sites:
     try:
         site = site.strip()
-        print ("[*] Downloading Content For : " + site)
+        print "[*] Downloading Content For : " + site
         x_arr = []
-        response = urllib.request.urlopen(site)
+        response = urllib2.urlopen(site)
         response.addheaders = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0')]
-        xx = (response.read().decode('utf-8'))
-        x = stripHTMLTags(xx)
+        x = stripHTMLTags(response.read())
 	#Replace junk found in our response
         x = x.replace('\n',' ')
         x = x.replace(',',' ')
@@ -96,22 +87,19 @@ for site in sites:
                 y = y[2:]
               y_arr.append(y)
     except Exception as e:
-        print ("[X] Execption Error 2: " + str(e))
+        print "[*] Error: " + str(e)
         pass
 
-#function to add unique words -- Better leave it as it is - Shafi
 y_arr_unique = OrderedDict.fromkeys(y_arr).keys()
-print ("[*] Processing List...")
+print "[*] Processing List"
 f_write = open("passwordList.txt","w")
 for yy in y_arr_unique:
     if yy.strip().isdigit():
       pass
     else:
-      #print (yy.strip())
+      #print yy.strip()
       f_write.write(yy.strip() + "\n")
 f_write.close()
-cwd = os.getcwd()
-print ("[*] Wordlist Generation Complete.")
-print ("[*] Output file Location - "+ cwd +"\\passwordList.txt")
-print ("[*] Total Count of Passwords >> " + str(len(y_arr_unique)))
-print ("[*] Exiting Application.")
+print "[*] Wordlist Generation Complete."
+print "[*] Output Located: passwordList.txt"
+print "[*] Total Count of Passwords >> " + str(len(y_arr_unique))
